@@ -2,78 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter Maps with GeoJSON'),
+        ),
+        body: MapSample(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  late MapShapeSource _shapeSource;
-
-  @override
-  void initState() {
-   _shapeSource = MapShapeSource.asset(
-      'assets/ethiopia.json',
-      shapeDataField: 'continent',
-    );
-    super.initState();
-  }
-  
+class MapSample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10, 50, 0, 0),
-        child: SfMaps(layers: [MapShapeLayer(source: _shapeSource)],),
-      ),
+    return SfMaps(
+      layers: <MapLayer>[
+        MapShapeLayer(
+          source: _getGeoJSONDataSource(),
+          showDataLabels: true, // Set to true to display labels for areas
+          tooltipSettings: MapTooltipSettings(
+            // Configure tooltip settings
+            color: Colors.grey[700],
+          ),
+          strokeColor: Colors.white, // Outline color for shapes
+          strokeWidth: 1.0, // Outline width for shapes
+        ),
+      ],
+    );
+  }
+
+  MapShapeSource _getGeoJSONDataSource() {
+    return MapShapeSource.asset(
+      'ethiopia.json', // Path to the GeoJSON file
+      shapeDataField: 'geometry', // Field in GeoJSON containing the shape data
+      dataCount: 1, // Number of features in the GeoJSON data
+      primaryValueMapper: (int index) => index.toString(), // Mapper for primary values
     );
   }
 }
