@@ -73,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
           source: _shapeSource, 
           strokeColor: Colors.white,
           strokeWidth: 1.0,
+          showDataLabels: true,
           zoomPanBehavior: _zoomPanBehavior,
           legend: MapLegend(MapElement.shape)
           // selectionChanged: (MapSelectionChangedDetails details) {

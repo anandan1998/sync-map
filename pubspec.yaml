@@ -31,10 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
   syncfusion_flutter_maps: ^25.1.42
-  firebase_core: ^1.10.0
-  firebase_auth: ^4.3.0
-  cloud_firestore: ^3.1.0
-  firebase_tools:
 
 
   # The following adds the Cupertino Icons font to your application.
