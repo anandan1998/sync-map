@@ -1,0 +1,10 @@
+^C:\USERS\OGUZH\ONEDRIVE\DOCUMENTS\GITHUB\SYNC-MAP\BUILD\WINDOWS\X64\CMAKEFILES\848FF0EB2080CC0E973B05B4DDD8C96B\GENERATE.STAMP.RULE
+setlocal
+"F:\Visual Studio 2022\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/oguzh/OneDrive/Documents/GitHub/sync-map/windows -BC:/Users/oguzh/OneDrive/Documents/GitHub/sync-map/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/oguzh/OneDrive/Documents/GitHub/sync-map/build/windows/x64/flutter_map_me.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
