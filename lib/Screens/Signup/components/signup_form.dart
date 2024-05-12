@@ -58,7 +58,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   _dropdownInput = value;
 
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: '',
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(defaultPadding),
@@ -67,7 +67,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
                 ),
                 value: 'Disease Name',
-                items: [
+                items: const [
                   DropdownMenuItem(
                     child: Text('Disease Name'),
                     value: 'Disease Name',
@@ -155,7 +155,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return  NewScreen();
+                    return  const NewScreen();
                   },
                 ),
               );

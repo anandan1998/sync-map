@@ -105,10 +105,10 @@ class _WelcomeScreen extends State<WelcomeScreen> {
   @override
   void initState() {
     _data = <Model>[
-      Model('Tulo', 280),
-      Model('Endiguagn', 190),
-      Model('Limu', 37),
-      Model('Geta', 310)
+      const Model('Tulo', 280),
+      const Model('Endiguagn', 190),
+      const Model('Limu', 37),
+      const Model('Geta', 310)
     ];
     _shapeSource = MapShapeSource.asset(
       'ethiopia.json',
@@ -117,10 +117,10 @@ class _WelcomeScreen extends State<WelcomeScreen> {
       primaryValueMapper: (int index) => _data[index].name,
       shapeColorValueMapper: (int index) => _data[index].density,
       shapeColorMappers: [
-        MapColorMapper(from: 0, to: 100, color: Colors.red, text: '< 100/km²'),
-        MapColorMapper(from: 101, to: 200, color: Colors.green, text: '100 - 200/km²'),
-        MapColorMapper(from: 201, to: 300, color: Colors.blue, text: '200 - 300/km²'),
-        MapColorMapper(from: 301, to: 400, color: Colors.orange, text: '300 - 400/km²'),
+        const MapColorMapper(from: 0, to: 100, color: Colors.red, text: '< 100/km²'),
+        const MapColorMapper(from: 101, to: 200, color: Colors.green, text: '100 - 200/km²'),
+        const MapColorMapper(from: 201, to: 300, color: Colors.blue, text: '200 - 300/km²'),
+        const MapColorMapper(from: 301, to: 400, color: Colors.orange, text: '300 - 400/km²'),
       ],
     );
     _zoomPanBehavior = MapZoomPanBehavior(enableDoubleTapZooming: true);
@@ -132,7 +132,7 @@ class _WelcomeScreen extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Out break tracker"),
+        title: const Text("Out break tracker"),
         actions: <Widget>[
           SizedBox(
             width: 100, // Set the width of the button
@@ -145,11 +145,11 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                   ),
                 );
               },
-              child: Text('Login'),
+              child: const Text('Login'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white, // Text color
                 backgroundColor: Theme.of(context).primaryColor, // Button color
-                padding: EdgeInsets.symmetric(horizontal: 8), // Optional: adjust padding for better fitting
+                padding: const EdgeInsets.symmetric(horizontal: 8), // Optional: adjust padding for better fitting
               ),
             ),
           ),
@@ -164,7 +164,7 @@ class _WelcomeScreen extends State<WelcomeScreen> {
               strokeColor: Colors.white,
               strokeWidth: 1.0,
               zoomPanBehavior: _zoomPanBehavior,
-              legend: MapLegend(MapElement.shape),
+              legend: const MapLegend(MapElement.shape),
             ),
           ],
         ),

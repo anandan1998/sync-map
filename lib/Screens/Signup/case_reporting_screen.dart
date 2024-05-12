@@ -36,13 +36,20 @@ class _CaseReportingFormState extends State<CaseReportingForm> {
   }
 
   Future<void> _fetchRegions() async {
+    //New fetch function, now with %100 more sorting!!
     try {
       final regionDocs =
           await FirebaseFirestore.instance.collection('regions').get();
+      //print(regionDocs.docs);
+
+      final sortedRegionDocs = regionDocs.docs..sort((a, b) =>
+          (a['shapeName'] as String)
+              .toLowerCase()
+              .compareTo((b['shapeName'] as String).toLowerCase()));
 
       setState(() {
-        _dropdownItems = regionDocs.docs
-            .map((doc) => DropdownMenuItem<String>(
+        _dropdownItems = sortedRegionDocs
+            .map((doc) => DropdownMenuItem<String>( //Change from Map to String
                   value: doc['shapeName'], // Use shapeName as the value
                   child: Text(doc['shapeName']),
                 ))
@@ -54,55 +61,119 @@ class _CaseReportingFormState extends State<CaseReportingForm> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    // ... (same as your existing _selectDate function) ...
+
+
+Future<void> _selectDate(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: selectedDate,
+    firstDate: DateTime(2020), // Earliest date to select
+    lastDate: DateTime.now(), // User can't select future dates
+  );
+  if (picked != null && picked != selectedDate) {
+    setState(() {
+      selectedDate = picked;
+    });
   }
-
-  Future<void> _submitData() async {
-    // ... your existing _submitData function ...
-     if (selectedRegionName == null || numCasesController.text.isEmpty) {
-      // Handle case where no region is selected or numCases is empty
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Please select a region and enter the number of cases.')),
-      );
-      return;
-    }
-
+}
+// Function to delete all case data
+  Future<void> _deleteAllCases() async {
     try {
-      // Get the region document using the selected region name
-      final regionDoc = await FirebaseFirestore.instance
-          .collection('regions')
-          .where('shapeName', isEqualTo: selectedRegionName)
-          .get();
+      final regionsSnapshot =
+          await FirebaseFirestore.instance.collection('regions').get();
 
-      if (regionDoc.docs.isNotEmpty) {
-        final regionId = regionDoc.docs.first.id;
-
-        final casesCollection = FirebaseFirestore.instance
-            .collection('regions')
-            .doc(regionId)
-            .collection('cases');
-
-        await casesCollection.doc(DateFormat('yyyy-MM-dd').format(selectedDate)).set({
-          'numCases': int.parse(numCasesController.text),
-          'date': selectedDate, // Store the date for reference (optional)
-        });
-
-        // ... (rest of your success handling code) ...
-      } else {
-        // Handle the case where the region is not found
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Region not found.')),
-        );
+      for (var regionDoc in regionsSnapshot.docs) {
+        final casesCollection = regionDoc.reference.collection('cases');
+        final casesSnapshot = await casesCollection.get();
+        for (var caseDoc in casesSnapshot.docs) {
+          await caseDoc.reference.delete();
+        }
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All case data deleted successfully!')),
+      );
     } catch (error) {
-      // ... (your error handling code) ...
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting case data: $error')),
+      );
     }
   }
 
-  @override
+Future<void> _submitData() async {
+  if (selectedRegionName == null || numCasesController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please select a region and enter the number of cases.')),
+    );
+    return;
+  }
+
+  try {
+    // 1. Get region document by name
+    QuerySnapshot regionSnapshot = await FirebaseFirestore.instance
+        .collection('regions')
+        .where('shapeName', isEqualTo: selectedRegionName)
+        .get();
+
+    if (regionSnapshot.docs.isNotEmpty) {
+      DocumentSnapshot regionDoc = regionSnapshot.docs.first;
+      String regionId = regionDoc.id;
+
+      // 2. Get reference to cases subcollection for the region (use regionId here)
+      CollectionReference casesCollection =
+          FirebaseFirestore.instance.collection('regions').doc(regionId).collection('cases');
+
+      // 3. Get or create the case document for the selected date
+      final dateString = DateFormat('yyyy-MM-dd').format(selectedDate);
+      DocumentReference caseDocRef = casesCollection.doc(dateString);
+      DocumentSnapshot caseDoc = await caseDocRef.get();
+
+      int existingNumCases = 0;
+      if (caseDoc.exists) {
+        existingNumCases = caseDoc.get('numCases') as int;
+      }
+
+      // 4. Calculate new numCases and update/create the document
+      final newNumCases = int.parse(numCasesController.text);
+      await caseDocRef.set({
+        'numCases': existingNumCases + newNumCases,
+        'date': selectedDate, // Optional, include if needed
+      });
+
+      // 5. Show success message with details
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Data submitted successfully!\n'
+            'Region: $selectedRegionName\n'
+            'Cases Added: $newNumCases\n'
+            'Total Cases: ${existingNumCases + newNumCases}\n'
+            'Date: $dateString',
+          ),
+        ),
+      );
+
+      // 6. Clear the form
+      numCasesController.clear();
+      setState(() {
+        selectedRegionName = null; 
+        selectedDate = DateTime.now(); 
+      });
+    } else {
+      // Handle case where the region is not found
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Region not found.')),
+      );
+    }
+  } catch (error) {
+    // Handle errors, show an error message to the user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error submitting data: $error')),
+    );
+  }
+}
+
+@override
   Widget build(BuildContext context) {
     return Form(
       child: Column(
@@ -141,8 +212,42 @@ class _CaseReportingFormState extends State<CaseReportingForm> {
             onPressed: _submitData, // Use the updated _submitData function
             child: Text("Submit".toUpperCase()),
           ),
+      const SizedBox(height: 16),
+          //Delete Button, only for testing dont forget to remove it
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirm Delete'),
+                  content: const Text(
+                      'Are you sure you want to delete all case data? This action cannot be undone.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(), // Cancel
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close dialog
+                        _deleteAllCases(); // Delete data
+                      },
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+             backgroundColor: Colors.red,
+            foregroundColor: Colors.white, // Optional: Set text color to white for contrast
+          ),
+          child: const Text('Delete All Cases'),
+        ),
+
         ],
       ),
     );
   }
 }
+
