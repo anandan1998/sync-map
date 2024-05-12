@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
 import '../../Login/login_screen.dart';
-import '../../Signup/signup_screen.dart';
+import '../../Signup/case_reporting_screen.dart';
 
 class NewBtn extends StatelessWidget {
   const NewBtn({
@@ -19,7 +19,7 @@ class NewBtn extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return const SignUpScreen();
+                  return const CaseReportingScreen();
                 },
               ),
             );
