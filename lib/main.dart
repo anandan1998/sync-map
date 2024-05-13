@@ -9,44 +9,35 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter_auth/screens/welcome/welcome_screen.dart';
+import "package:flutter_auth/Screens/Welcome/Classes/DataFetcher.dart";
+import 'package:flutter_auth/model.dart'; // data model
 
-Future<int> calculateTotalCasesLast30Days(String regionId) async {
-  final now = DateTime.now();
-  final thirtyDaysAgo = now.subtract(const Duration(days: 30));
 
-  final casesQuery = FirebaseFirestore.instance
-      .collection('regions')
-      .doc(regionId)
-      .collection('cases')
-      .where('date', isGreaterThanOrEqualTo: thirtyDaysAgo)
-      .where('date', isLessThanOrEqualTo: now);
-
-  final snapshot = await casesQuery.get();
-
-  int totalCases = 0;
-  for (var doc in snapshot.docs) {
-    totalCases += (doc.data()['numCases'] as int);
-  }
-
-  return totalCases;
-}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();  // Ensure Flutter bindings are initialized
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+// Initialize Firebase
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+).then((_) async {
+  final dataFetcher = DataFetcher();
+  try {
+    final regionCaseDataList = await dataFetcher.fetchRegionCaseDataLast30Days(DateTime.now());
 
-  // // Import Region Data (Only Once)
-  // final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // if (!prefs.containsKey('regionsImported')) {  // Check if imported before
-  //   await importRegions();                      // Import regions from data_repository.dart
-  //   await prefs.setBool('regionsImported', true); // Mark as imported
-  // }
+    // Print the region-case pairs (using a for loop)
+    for (var model in regionCaseDataList) {
+      print('${model.name} - ${model.density.toInt()} cases'); 
+    }
 
-  runApp(const MyApp());
+    runApp(const MyApp());  // Pass the data to MyApp
+  } catch (error) {
+    print('Error fetching data: $error');
+  }
+}).catchError((error) {
+  print("Firebase initialization error: $error");
+});
 }
+//  runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -86,3 +77,13 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+  //CAUTION: Uncommenting the following code will import the regions from THE LITERAL FIRESTORE DB
+  //insert into void main() 
+
+  // // Import Region Data (Only Once)
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // if (!prefs.containsKey('regionsImported')) {  // Check if imported before
+  //   await importRegions();                      // Import regions from data_repository.dart
+  //   await prefs.setBool('regionsImported', true); // Mark as imported
+  // }

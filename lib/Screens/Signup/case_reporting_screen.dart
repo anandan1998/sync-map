@@ -137,7 +137,7 @@ Future<void> _submitData() async {
       final newNumCases = int.parse(numCasesController.text);
       await caseDocRef.set({
         'numCases': existingNumCases + newNumCases,
-        'date': selectedDate, // Optional, include if needed
+        'date': selectedDate, // include if needed
       });
 
       // 5. Show success message with details

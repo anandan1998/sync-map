@@ -1,42 +1,50 @@
+// data_fetcher.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart'; // Ensure you have this for date formatting
+import 'package:flutter_auth/model.dart'; // data model
 
 class DataFetcher {
-  Future<Map<String, int>> fetchRegionCaseDataLast30Days(DateTime endDate) async {
-    // Calculate the start date (30 days ago)
+  Future<List<Model>> fetchRegionCaseDataLast30Days(DateTime endDate) async {
     final startDate = endDate.subtract(const Duration(days: 30));
+    final regionCaseDataList = <Model>[];  // List to store Model objects
 
+    final regionsSnapshot = await FirebaseFirestore.instance
+        .collection('regions')
+        .get();
 
-    // Fetch region data
-    final regionsSnapshot = await FirebaseFirestore.instance.collection('regions').get();
-    
-    // Fetch cases for each region
-    Map<String, int> regionCaseData = {};
     for (var regionDoc in regionsSnapshot.docs) {
       final regionId = regionDoc.id;
-      final casesQuery = FirebaseFirestore.instance
-          .collection('regions')
-          .doc(regionId)
-          .collection('cases')
-          .where('date', isGreaterThanOrEqualTo: startDate)
-          .where('date', isLessThanOrEqualTo: endDate);
+      final regionName = regionDoc.get('shapeName') as String?; // Get region name if available
 
-      final casesSnapshot = await casesQuery.get();
+      try {
+        final casesQuery = FirebaseFirestore.instance
+            .collection('regions')
+            .doc(regionId)
+            .collection('cases')
+            .where('date', isGreaterThanOrEqualTo: startDate)
+            .where('date', isLessThanOrEqualTo: endDate);
 
-      int totalCases = 0;
-      for (var caseDoc in casesSnapshot.docs) {
-        final numCases = caseDoc.get('numCases');
-        if (numCases is int) { // Check if numCases is already an int
-          totalCases += numCases;
-        } else if (numCases is double) {
-          totalCases += numCases.toInt(); // Convert double to int
+        final casesSnapshot = await casesQuery.get();
+
+        int totalCases = 0;
+        for (var caseDoc in casesSnapshot.docs) {
+          final numCases = caseDoc.get('numCases');
+          if (numCases is int) {
+            totalCases += numCases;
+          } else {
+            print('Invalid numCases format for region $regionId on ${caseDoc.id}: $numCases');
+          }
         }
-        // Can handle the cases that are not int or double here, throwing an error right now.
+
+        regionCaseDataList.add(
+          Model(regionName ?? regionId, totalCases.toDouble()),
+        ); // Create a Model instance and add it to the list
+      } catch (e) {
+        print("The region $regionId does not have a case collection");
       }
-      regionCaseData[regionId] = totalCases;
     }
 
-    return regionCaseData;
+    //print('Fetched Region Case Data: $regionCaseDataList');
+    return regionCaseDataList;
   }
 }
