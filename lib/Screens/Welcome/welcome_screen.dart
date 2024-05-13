@@ -1,94 +1,9 @@
-// import 'package:flutter/material.dart';
-
-// import '../../components/background.dart';
-// import '../../responsive.dart';
-// import 'components/login_signup_btn.dart';
-// import 'components/welcome_image.dart';
-
-// class WelcomeScreen extends StatelessWidget {
-//   const WelcomeScreen({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Background(
-//       child: SingleChildScrollView(
-//         child: SafeArea(
-//           child: Responsive(
-//             desktop: Row(
-//               mainAxisAlignment: MainAxisAlignment.end,
-//               children: [
-//                 Expanded(
-//                   child: WelcomeImage(),
-//                 ),
-//                 Expanded(
-//                   child: Row(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       SizedBox(
-//                         width: 450,
-//                         child: LoginAndSignupBtn(),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             mobile: MobileWelcomeScreen(),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class MobileWelcomeScreen extends StatelessWidget {
-//   const MobileWelcomeScreen({
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: <Widget>[
-//         WelcomeImage(),
-//         Row(
-//           children: [
-//             Spacer(),
-//             Expanded(
-//               flex: 8,
-//               child: LoginAndSignupBtn(),
-//             ),
-//             Spacer(),
-//           ],
-//         ),
-//       ],
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 import '../Login/login_screen.dart';
+import "../Welcome/Classes/DataFetcher.dart";
+import 'package:intl/intl.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-//         useMaterial3: true,
-//       ),
-//       home: const MyHomePage(title: 'Flutter Demo Home Page'),
-//     );
-//   }
-// }
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -101,6 +16,21 @@ class _WelcomeScreen extends State<WelcomeScreen> {
   late MapShapeSource _shapeSource;
   late List<Model> _data;
   late MapZoomPanBehavior _zoomPanBehavior;
+  DateTime selectedDate = DateTime.now(); // State for selected date
+
+  Future<void> _selectDate(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: selectedDate,
+    firstDate: DateTime(2020), // Earliest date to select
+    lastDate: DateTime.now(), // User can't select future dates
+  );
+  if (picked != null && picked != selectedDate) {
+    setState(() {
+      selectedDate = picked;
+    });
+  }
+}
 
   @override
   void initState() {
@@ -117,10 +47,10 @@ class _WelcomeScreen extends State<WelcomeScreen> {
       primaryValueMapper: (int index) => _data[index].name,
       shapeColorValueMapper: (int index) => _data[index].density,
       shapeColorMappers: [
-        const MapColorMapper(from: 0, to: 100, color: Colors.red, text: '< 100/km²'),
-        const MapColorMapper(from: 101, to: 200, color: Colors.green, text: '100 - 200/km²'),
-        const MapColorMapper(from: 201, to: 300, color: Colors.blue, text: '200 - 300/km²'),
-        const MapColorMapper(from: 301, to: 400, color: Colors.orange, text: '300 - 400/km²'),
+        const MapColorMapper(from: 0, to: 100, color: Colors.red, text: 'explanation'),
+        const MapColorMapper(from: 101, to: 200, color: Colors.green, text: 'explanation'),
+        const MapColorMapper(from: 201, to: 300, color: Colors.blue, text: 'explanation'),
+        const MapColorMapper(from: 301, to: 400, color: Colors.orange, text: 'explanation'),
       ],
     );
     _zoomPanBehavior = MapZoomPanBehavior(enableDoubleTapZooming: true);
@@ -128,14 +58,31 @@ class _WelcomeScreen extends State<WelcomeScreen> {
     super.initState();
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Out break tracker"),
+        title: const Text("Outbreak Tracker"),
         actions: <Widget>[
-          SizedBox(
-            width: 100, // Set the width of the button
+          // Date Selection Button (Using _selectDate directly)
+          Flexible(
+          child:ElevatedButton(
+            onPressed: () => _selectDate(context),
+            child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).primaryColor,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+            ),
+          ),
+          ),
+
+          const SizedBox(width: 10), // Add spacing between buttons
+
+          // Login Button (Existing)
+          Flexible(
+          child:SizedBox(
+            width: 100, 
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -147,11 +94,12 @@ class _WelcomeScreen extends State<WelcomeScreen> {
               },
               child: const Text('Login'),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, // Text color
-                backgroundColor: Theme.of(context).primaryColor, // Button color
-                padding: const EdgeInsets.symmetric(horizontal: 8), // Optional: adjust padding for better fitting
+                foregroundColor: Colors.white, 
+                backgroundColor: Theme.of(context).primaryColor, 
+                padding: const EdgeInsets.symmetric(horizontal: 8), 
               ),
             ),
+          ),
           ),
         ],
       ),

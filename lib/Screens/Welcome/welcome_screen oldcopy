@@ -1,0 +1,95 @@
+import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_maps/maps.dart';
+import '../Login/login_screen.dart';
+import "../Welcome/Classes/DataFetcher.dart";
+import "../Welcome/widgets/DateSelector.dart";
+
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreen();
+}
+
+class _WelcomeScreen extends State<WelcomeScreen> {
+  late MapShapeSource _shapeSource;
+  late List<Model> _data;
+  late MapZoomPanBehavior _zoomPanBehavior;
+
+  @override
+  void initState() {
+    _data = <Model>[
+      const Model('Tulo', 280),
+      const Model('Endiguagn', 190),
+      const Model('Limu', 37),
+      const Model('Geta', 310)
+    ];
+    _shapeSource = MapShapeSource.asset(
+      'ethiopia.json',
+      shapeDataField: 'shapeName',
+      dataCount: _data.length,
+      primaryValueMapper: (int index) => _data[index].name,
+      shapeColorValueMapper: (int index) => _data[index].density,
+      shapeColorMappers: [
+        const MapColorMapper(from: 0, to: 100, color: Colors.red, text: '< 100/km²'),
+        const MapColorMapper(from: 101, to: 200, color: Colors.green, text: '100 - 200/km²'),
+        const MapColorMapper(from: 201, to: 300, color: Colors.blue, text: '200 - 300/km²'),
+        const MapColorMapper(from: 301, to: 400, color: Colors.orange, text: '300 - 400/km²'),
+      ],
+    );
+    _zoomPanBehavior = MapZoomPanBehavior(enableDoubleTapZooming: true);
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Out break tracker"),
+        actions: <Widget>[
+          SizedBox(
+            width: 100, // Set the width of the button
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              },
+              child: const Text('Login'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, // Text color
+                backgroundColor: Theme.of(context).primaryColor, // Button color
+                padding: const EdgeInsets.symmetric(horizontal: 8), // Optional: adjust padding for better fitting
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: SfMaps(
+          layers: [
+            MapShapeLayer(
+              source: _shapeSource, 
+              strokeColor: Colors.white,
+              strokeWidth: 1.0,
+              zoomPanBehavior: _zoomPanBehavior,
+              legend: const MapLegend(MapElement.shape),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Model {
+  const Model(this.name, this.density);
+
+  final String name;
+  final double density;
+}
