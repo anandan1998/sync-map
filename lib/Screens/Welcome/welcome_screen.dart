@@ -18,6 +18,8 @@ class _WelcomeScreen extends State<WelcomeScreen> {
   late MapZoomPanBehavior _zoomPanBehavior;
   DateTime selectedDate = DateTime.now(); // State for selected date
 
+
+
   Future<void> _selectDate(BuildContext context) async {
   final DateTime? picked = await showDatePicker(
     context: context,
@@ -29,6 +31,7 @@ class _WelcomeScreen extends State<WelcomeScreen> {
     setState(() {
       selectedDate = picked;
     });
+    //final regionCaseData = await _dataFetcher.fetchRegionCaseDataLast30Days(endDate);
   }
 }
 
@@ -40,6 +43,7 @@ class _WelcomeScreen extends State<WelcomeScreen> {
       const Model('Limu', 37),
       const Model('Geta', 310)
     ];
+    
     _shapeSource = MapShapeSource.asset(
       'ethiopia.json',
       shapeDataField: 'shapeName',
@@ -127,3 +131,11 @@ class Model {
   final String name;
   final double density;
 }
+
+class RegionCaseModel {
+  final String regionName;
+  final double totalCases; // depends on the color mappers.
+
+  RegionCaseModel(this.regionName, this.totalCases);
+}
+
