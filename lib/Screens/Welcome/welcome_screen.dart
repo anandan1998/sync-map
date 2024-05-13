@@ -117,6 +117,17 @@ class _WelcomeScreen extends State<WelcomeScreen> {
               strokeWidth: 1.0,
               zoomPanBehavior: _zoomPanBehavior,
               legend: const MapLegend(MapElement.shape),
+              shapeTooltipBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.all(7),
+                  child: Column(
+                    children: [
+                      Text(_data[index].name),
+                      Text('infected: ${_data[index].density}'),
+                    ],
+                  ),
+                );
+              },
             ),
           ],
         ),
