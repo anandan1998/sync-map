@@ -8,6 +8,8 @@ import '../../Login/login_screen.dart';
 import '../../Update/update_screen.dart';
 
 class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
@@ -69,32 +71,32 @@ class _SignUpFormState extends State<SignUpForm> {
                 value: 'Disease Name',
                 items: const [
                   DropdownMenuItem(
-                    child: Text('Disease Name'),
                     value: 'Disease Name',
+                    child: Text('Disease Name'),
                   ),
                   DropdownMenuItem(
-                    child: Text('Cancer'),
                     value: 'Cancer',
+                    child: Text('Cancer'),
                   ),
                   DropdownMenuItem(
-                    child: Text('Diabetes'),
                     value: 'Diabetes',
-                  ),
-                  DropdownMenuItem(
                     child: Text('Diabetes'),
-                    value: 'Diabetes',
                   ),
                   DropdownMenuItem(
+                    value: 'Diabetes',
                     child: Text('Diabetes'),
-                    value: 'Diabetes',
                   ),
                   DropdownMenuItem(
+                    value: 'Diabetes',
                     child: Text('Diabetes'),
-                    value: 'Diabetes',
                   ),
                   DropdownMenuItem(
-                    child: Text('Heart Disease'),
+                    value: 'Diabetes',
+                    child: Text('Diabetes'),
+                  ),
+                  DropdownMenuItem(
                     value: 'Heart Disease',
+                    child: Text('Heart Disease'),
                   ),
                 ], onChanged: (String? _dropdownInput) {  },
               ),

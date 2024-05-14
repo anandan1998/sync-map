@@ -13,44 +13,51 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreen extends State<WelcomeScreen> {
-  MapShapeSource? _shapeSource;
-  List<Model> _data = [];
-  late MapZoomPanBehavior _zoomPanBehavior;
+  late MapShapeSource? _shapeSource;
+  late List<Model> _data = [];
+  MapZoomPanBehavior _zoomPanBehavior = MapZoomPanBehavior(enableDoubleTapZooming: true);
   DateTime selectedDate = DateTime.now();
+  bool _isLoading = true;
   final DataFetcher _dataFetcher = DataFetcher();
   
 
   @override
   void initState() {
-    super.initState();
-    _zoomPanBehavior = MapZoomPanBehavior(enableDoubleTapZooming: true);
     _fetchData(); 
+    super.initState();
   }
 
+
   Future<void> _fetchData() async {
+    setState(() => _isLoading = true); // Start loading
+
     try {
       final fetchedData = await _dataFetcher.fetchRegionCaseDataLast30Days(selectedDate);
+      // Initialize shapeSource AFTER data is fetched
+      _shapeSource = MapShapeSource.asset(
+        'assets/ethiopia.json',
+        shapeDataField: 'shapeName',
+        dataCount: fetchedData.length, // Use fetchedData.length here
+        primaryValueMapper: (int index) => fetchedData[index].name,
+        shapeColorValueMapper: (int index) => fetchedData[index].density,
+        shapeColorMappers: [
+          const MapColorMapper(from: 1, to: 99, color: Colors.yellow, text: '<100'),
+          const MapColorMapper(from: 100, to: 200, color: Color.fromARGB(255, 255, 102, 102), text: '100-200'),
+          const MapColorMapper(from: 201, to: 300, color: Color.fromARGB(255, 255, 0, 0), text: '201-300'),
+          const MapColorMapper(from: 301, to: double.infinity, color: Color.fromARGB(255, 153, 0, 0), text: '>300'),
+        ],
+      );
       setState(() {
         _data = fetchedData;
-
-        // Initialize _shapeSource only if it's not already initialized
-        _shapeSource ??= MapShapeSource.asset(
-          'assets/ethiopia.json', // Assuming your JSON file is in the 'assets' folder
-          shapeDataField: 'shapeName',
-          dataCount: _data.length,
-          primaryValueMapper: (int index) => _data[index].name,
-          shapeColorValueMapper: (int index) => _data[index].density,
-          shapeColorMappers: [
-            const MapColorMapper(from: 0, to: 100, color: Colors.red, text: '<100'),
-            const MapColorMapper(from: 101, to: 200, color: Colors.orange, text: '101-200'),
-            const MapColorMapper(from: 201, to: 300, color: Colors.yellow, text: '201-300'),
-            const MapColorMapper(from: 301, to: 400, color: Colors.green, text: '>300'),
-          ],
-        );
+        _isLoading = false; // Stop loading
       });
     } catch (error) {
       print('Error fetching data: $error');
-      // Handle the error (e.g., show a snackbar to the user)
+      setState(() => _isLoading = false); // Stop loading in case of error
+      // Show SnackBar error message here
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching data: $error')),
+      );
     }
   }
 
@@ -78,12 +85,12 @@ class _WelcomeScreen extends State<WelcomeScreen> {
           Flexible(
             child: ElevatedButton(
               onPressed: () => _selectDate(context),
-              child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Theme.of(context).primaryColor,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
+              child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
             ),
           ),
           const SizedBox(width: 10),
@@ -99,12 +106,12 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                     ),
                   );
                 },
-                child: const Text('Login'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Theme.of(context).primaryColor,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
+                child: const Text('Login'),
               ),
             ),
           ),
@@ -112,11 +119,12 @@ class _WelcomeScreen extends State<WelcomeScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: _shapeSource != null
-            ? SfMaps(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SfMaps(
                 layers: [
                   MapShapeLayer(
-                    source: _shapeSource!, 
+                    source: _shapeSource!,
                     strokeColor: Colors.white,
                     strokeWidth: 1.0,
                     zoomPanBehavior: _zoomPanBehavior,
@@ -134,9 +142,8 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                     },
                   ),
                 ],
-              )
-            : const Center(child: CircularProgressIndicator()), 
+              ),
       ),
     );
+    }
   }
-}
