@@ -130,13 +130,17 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                     zoomPanBehavior: _zoomPanBehavior,
                     legend: const MapLegend(MapElement.shape),
                     shapeTooltipBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(7),
-                        child: Column(
-                          children: [
-                            Text(_data[index].name),
-                            Text('infected: ${_data[index].density.toInt()}'), // Convert to int for display
-                          ],
+                      return Container(
+                        color: Color.fromARGB(255, 207, 206, 206), // Set the color of the tooltip
+                        constraints: BoxConstraints(maxHeight: 80.0), // Set the maximum height of the tooltip
+                        child: Padding(
+                          padding: const EdgeInsets.all(7),
+                          child: Column(
+                            children: [
+                              Text(_data[index].name),
+                              Text('infected: ${_data[index].density.toInt()}'), // Convert to int for display
+                            ],
+                          ),
                         ),
                       );
                     },
