@@ -157,134 +157,137 @@ class _CaseReportingFormState extends State<CaseReportingForm> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Center(
-        child: Card(
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Report New Cases',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'Select Region',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 400), // Increased the container's width
+          child: Card(
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Report New Cases',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  value: selectedRegionName,
-                  items: _dropdownItems,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedRegionName = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: numCasesController,
-                  decoration: InputDecoration(
-                    labelText: 'Number of Cases',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.calendar_today),
-                      const SizedBox(width: 8),
-                      Text(
-                        DateFormat('yyyy-MM-dd').format(selectedDate),
-                        style: TextStyle(fontSize: 16),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Select Region',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _submitData,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
+                    value: selectedRegionName,
+                    items: _dropdownItems,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRegionName = value;
+                      });
+                    },
                   ),
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Confirm Delete'),
-                        content: const Text(
-                            'Are you sure you want to delete all case data? This action cannot be undone.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.blue.shade800,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              _deleteAllCases();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text('Delete'),
-                          ),
-                        ],
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: numCasesController,
+                    decoration: InputDecoration(
+                      labelText: 'Number of Cases',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _selectDate(context),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 8), // Reduced the padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.calendar_today, size: 20), // Reduced the icon size
+                        const SizedBox(width: 8),
+                        Text(
+                          DateFormat('yyyy-MM-dd').format(selectedDate),
+                          style: TextStyle(fontSize: 14), // Reduced the font size
+                        ),
+                      ],
                     ),
                   ),
-                  child: const Text(
-                    'Delete All Cases',
-                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 2, 79, 33)),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _submitData,
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 8), // Reduced the padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(fontSize: 14, color: Colors.white), // Reduced the font size
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirm Delete'),
+                          content: const Text(
+                              'Are you sure you want to delete all case data? This action cannot be undone.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.blue.shade800,
+                                padding: EdgeInsets.symmetric(vertical: 8), // Reduced the padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                _deleteAllCases();
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                padding: EdgeInsets.symmetric(vertical: 8), // Reduced the padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 8), // Reduced the padding
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Delete All Cases',
+                      style: TextStyle(fontSize: 14, color: Colors.white), // Reduced the font size
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -292,6 +295,302 @@ class _CaseReportingFormState extends State<CaseReportingForm> {
     );
   }
 }
+
+// working as expected
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:flutter/material.dart';
+// import 'package:intl/intl.dart';
+
+// class CaseReportingScreen extends StatelessWidget {
+//   const CaseReportingScreen({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Report New Cases'),
+//       ),
+//       body: const CaseReportingForm(),
+//     );
+//   }
+// }
+
+// class CaseReportingForm extends StatefulWidget {
+//   const CaseReportingForm({Key? key}) : super(key: key);
+
+//   @override
+//   _CaseReportingFormState createState() => _CaseReportingFormState();
+// }
+
+// class _CaseReportingFormState extends State<CaseReportingForm> {
+//   String? selectedRegionName;
+//   TextEditingController numCasesController = TextEditingController();
+//   DateTime selectedDate = DateTime.now();
+//   List<DropdownMenuItem<String>> _dropdownItems = [];
+
+//   @override
+//   void initState() {
+//     _fetchRegions();
+//     super.initState();
+//   }
+
+//   Future<void> _fetchRegions() async {
+//     try {
+//       final regionDocs = await FirebaseFirestore.instance.collection('regions').get();
+//       final sortedRegionDocs = regionDocs.docs
+//         ..sort((a, b) => (a['shapeName'] as String).toLowerCase().compareTo((b['shapeName'] as String).toLowerCase()));
+//       setState(() {
+//         _dropdownItems = sortedRegionDocs
+//             .map((doc) => DropdownMenuItem<String>(
+//                   value: doc['shapeName'],
+//                   child: Text(doc['shapeName']),
+//                 ))
+//             .toList();
+//       });
+//     } catch (error) {
+//       print('Error fetching regions: $error');
+//     }
+//   }
+
+//   Future<void> _selectDate(BuildContext context) async {
+//     final DateTime? picked = await showDatePicker(
+//       context: context,
+//       initialDate: selectedDate,
+//       firstDate: DateTime(2020),
+//       lastDate: DateTime.now(),
+//     );
+//     if (picked != null && picked != selectedDate) {
+//       setState(() {
+//         selectedDate = picked;
+//       });
+//     }
+//   }
+
+//   Future<void> _deleteAllCases() async {
+//     try {
+//       final regionsSnapshot = await FirebaseFirestore.instance.collection('regions').get();
+//       for (var regionDoc in regionsSnapshot.docs) {
+//         final casesCollection = regionDoc.reference.collection('cases');
+//         final casesSnapshot = await casesCollection.get();
+//         for (var caseDoc in casesSnapshot.docs) {
+//           await caseDoc.reference.delete();
+//         }
+//       }
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('All case data deleted successfully!')),
+//       );
+//     } catch (error) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Error deleting case data: $error')),
+//       );
+//     }
+//   }
+
+//   Future<void> _submitData() async {
+//     if (selectedRegionName == null || numCasesController.text.isEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('Please select a region and enter the number of cases.')),
+//       );
+//       return;
+//     }
+
+//     try {
+//       QuerySnapshot regionSnapshot = await FirebaseFirestore.instance
+//           .collection('regions')
+//           .where('shapeName', isEqualTo: selectedRegionName)
+//           .get();
+
+//       if (regionSnapshot.docs.isNotEmpty) {
+//         DocumentSnapshot regionDoc = regionSnapshot.docs.first;
+//         String regionId = regionDoc.id;
+
+//         CollectionReference casesCollection =
+//             FirebaseFirestore.instance.collection('regions').doc(regionId).collection('cases');
+
+//         final dateString = DateFormat('yyyy-MM-dd').format(selectedDate);
+//         DocumentReference caseDocRef = casesCollection.doc(dateString);
+//         DocumentSnapshot caseDoc = await caseDocRef.get();
+
+//         int existingNumCases = 0;
+//         if (caseDoc.exists) {
+//           existingNumCases = caseDoc.get('numCases') as int;
+//         }
+
+//         final newNumCases = int.parse(numCasesController.text);
+//         await caseDocRef.set({
+//           'numCases': existingNumCases + newNumCases,
+//           'date': selectedDate,
+//         });
+
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(
+//             content: Text(
+//               'Data submitted successfully!\n'
+//               'Region: $selectedRegionName\n'
+//               'Cases Added: $newNumCases\n'
+//               'Total Cases: ${existingNumCases + newNumCases}\n'
+//               'Date: $dateString',
+//             ),
+//           ),
+//         );
+
+//         numCasesController.clear();
+//         setState(() {
+//           selectedRegionName = null;
+//           selectedDate = DateTime.now();
+//         });
+//       } else {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           const SnackBar(content: Text('Region not found.')),
+//         );
+//       }
+//     } catch (error) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Error submitting data: $error')),
+//       );
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Center(
+//         child: Card(
+//           elevation: 1,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(16),
+//           ),
+//           child: Padding(
+//             padding: const EdgeInsets.all(16.0),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 const Text(
+//                   'Report New Cases',
+//                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//                 ),
+//                 const SizedBox(height: 16),
+//                 DropdownButtonFormField<String>(
+//                   decoration: InputDecoration(
+//                     labelText: 'Select Region',
+//                     border: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   value: selectedRegionName,
+//                   items: _dropdownItems,
+//                   onChanged: (value) {
+//                     setState(() {
+//                       selectedRegionName = value;
+//                     });
+//                   },
+//                 ),
+//                 const SizedBox(height: 16),
+//                 TextFormField(
+//                   controller: numCasesController,
+//                   decoration: InputDecoration(
+//                     labelText: 'Number of Cases',
+//                     border: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   keyboardType: TextInputType.number,
+//                 ),
+//                 const SizedBox(height: 16),
+//                 ElevatedButton(
+//                   onPressed: () => _selectDate(context),
+//                   style: ElevatedButton.styleFrom(
+//                     padding: EdgeInsets.symmetric(vertical: 16),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
+//                   ),
+//                   child: Row(
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: [
+//                       Icon(Icons.calendar_today),
+//                       const SizedBox(width: 8),
+//                       Text(
+//                         DateFormat('yyyy-MM-dd').format(selectedDate),
+//                         style: TextStyle(fontSize: 16),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 const SizedBox(height: 16),
+//                 ElevatedButton(
+//                   onPressed: _submitData,
+//                   style: ElevatedButton.styleFrom(
+//                     padding: EdgeInsets.symmetric(vertical: 16),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
+//                   ),
+//                   child: const Text(
+//                     'Submit',
+//                     style: TextStyle(fontSize: 16, color: Colors.white),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 16),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     showDialog(
+//                       context: context,
+//                       builder: (context) => AlertDialog(
+//                         title: const Text('Confirm Delete'),
+//                         content: const Text(
+//                             'Are you sure you want to delete all case data? This action cannot be undone.'),
+//                         actions: [
+//                           TextButton(
+//                             onPressed: () => Navigator.of(context).pop(),
+//                             style: TextButton.styleFrom(
+//                               foregroundColor: Colors.blue.shade800,
+//                               padding: EdgeInsets.symmetric(vertical: 16),
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(12),
+//                               ),
+//                             ),
+//                             child: const Text('Cancel'),
+//                           ),
+//                           TextButton(
+//                             onPressed: () {
+//                               Navigator.of(context).pop();
+//                               _deleteAllCases();
+//                             },
+//                             style: TextButton.styleFrom(
+//                               foregroundColor: Colors.red,
+//                               padding: EdgeInsets.symmetric(vertical: 16),
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(12),
+//                               ),
+//                             ),
+//                             child: const Text('Delete'),
+//                           ),
+//                         ],
+//                       ),
+//                     );
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     padding: EdgeInsets.symmetric(vertical: 16),
+//                     backgroundColor: Colors.red,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
+//                   ),
+//                   child: const Text(
+//                     'Delete All Cases',
+//                     style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 2, 79, 33)),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
                      
 
