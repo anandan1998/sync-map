@@ -15,6 +15,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreen extends State<WelcomeScreen> {
   late MapShapeSource? _shapeSource;
   late List<Model> _data = [];
+  late List<String> _time = ['30 days', '7 days', '1 day'];
   MapZoomPanBehavior _zoomPanBehavior = MapZoomPanBehavior(enableDoubleTapZooming: true);
   DateTime selectedDate = DateTime.now();
   bool _isLoading = true;
@@ -83,17 +84,25 @@ class _WelcomeScreen extends State<WelcomeScreen> {
         title: const Text("Outbreak Tracker"),
         actions: <Widget>[
           Flexible(
-            child: ElevatedButton(
-              onPressed: () => _selectDate(context),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () => _selectDate(context),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+                child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
               ),
-              child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
             ),
           ),
-          const SizedBox(width: 10),
+          Flexible(
+            child: SizedBox(
+              width: 200,
+              child: MyDropdownButton(),
+            ),
+          ),
           Flexible(
             child: SizedBox(
               width: 100,
@@ -151,3 +160,45 @@ class _WelcomeScreen extends State<WelcomeScreen> {
     );
     }
   }
+
+  class MyDropdownButton extends StatefulWidget {
+  @override
+  _MyDropdownButtonState createState() => _MyDropdownButtonState();
+}
+
+class _MyDropdownButtonState extends State<MyDropdownButton> {
+  String dropdownValue = '30 days';
+  List<String> timeOptions = ['30 days', '7 days', '1 day'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        border: Border.all(color: const Color.fromARGB(255, 253, 253, 254)),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: dropdownValue,
+          dropdownColor: Theme.of(context).primaryColor,
+          style: TextStyle(color: Colors.white, fontSize: 18),
+          icon: Icon(Icons.arrow_drop_down, color: Colors.white),  // Set the icon color here
+          items: timeOptions.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              dropdownValue = newValue!;
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
