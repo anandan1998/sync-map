@@ -22,9 +22,6 @@ class _SignUpFormState extends State<SignUpForm> {
   String? _textInput;
 
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Form(

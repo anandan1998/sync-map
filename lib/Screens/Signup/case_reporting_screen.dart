@@ -276,14 +276,14 @@ class _CaseReportingFormState extends State<CaseReportingForm> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 8), // Reduced the padding
-                      backgroundColor: Colors.red,
+                      backgroundColor: Color.fromARGB(255, 26, 10, 114),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
-                      'Delete All Cases',
-                      style: TextStyle(fontSize: 14, color: Colors.white), // Reduced the font size
+                      'Undo',
+                      style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255)), // Reduced the font size
                     ),
                   ),
                 ],

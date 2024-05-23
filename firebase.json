@@ -1,1 +1,29 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"outbreakdb","configurations":{"web":"1:876411771754:web:ff5713c08e4fa946192313","windows":"1:876411771754:web:433357020428e006192313"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "outbreakdb",
+          "configurations": {
+            "web": "1:876411771754:web:ff5713c08e4fa946192313",
+            "windows": "1:876411771754:web:433357020428e006192313"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
